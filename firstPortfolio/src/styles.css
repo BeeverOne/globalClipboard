@@ -1,0 +1,219 @@
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Roboto Flex", sans-serif;
+  background: white;
+  width: 1440px;
+  margin: 0 auto;
+  position: relative;
+  height: 3072px;
+}
+
+/* Background Gradient */
+.background-gradient {
+  position: absolute;
+  width: 2146px;
+  height: 3446px;
+  left: -399px;
+  top: -193px;
+  background: linear-gradient(
+    180deg,
+    #5291cd 0%,
+    #b2326e 38%,
+    #52ebc3 74%,
+    #57efc7 100%
+  );
+  z-index: -1;
+}
+
+/* Header */
+.header {
+  position: absolute;
+  width: 1440px;
+  height: 147px;
+  top: 0;
+  left: 0;
+}
+
+.header-content {
+  position: absolute;
+  width: 1265px;
+  height: 147px;
+  left: 90px;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  color: white;
+  font-size: 72px;
+  font-weight: 700;
+  font-family: "Roboto Flex", sans-serif;
+}
+
+.navigation {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-link {
+  color: white;
+  font-size: 40px;
+  font-weight: 400;
+  font-family: "Roboto Flex", sans-serif;
+  text-decoration: none;
+}
+
+.contact-button {
+  width: 216px;
+  height: 63px;
+  padding: 20px;
+  background: white;
+  border-radius: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32px;
+  font-weight: 400;
+  color: black;
+  text-decoration: none;
+}
+
+.header-line {
+  position: absolute;
+  width: 1265px;
+  height: 0;
+  left: 90px;
+  top: 142px;
+  border: 5px solid white;
+}
+
+/* Product Sections */
+main {
+  position: absolute;
+  width: 1440px;
+  top: 360px; /* Adjusted based on the original top positions */
+  left: 0;
+}
+
+.product-section {
+  position: relative;
+  height: 546px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 38px;
+  margin-bottom: 100px; /* Space between sections */
+}
+
+.product-section.reverse {
+  justify-content: flex-end;
+}
+
+.product-container {
+  position: relative;
+  width: 1225px;
+  height: 546px;
+  display: flex;
+  align-items: center;
+}
+
+.product-image {
+  width: 483px;
+  height: 546px;
+  /* background: #1f2a3f; */
+  position: absolute;
+}
+
+.product-image.ecowave {
+  left: 0;
+}
+
+.product-image.aerofit {
+  left: 742px;
+}
+
+.product-image.luminatech {
+  left: 0;
+}
+
+.product-details {
+  position: absolute;
+  width: 592px;
+  height: 525px;
+  left: 633px;
+  top: 0;
+}
+
+.product-section.reverse .product-details {
+  left: auto;
+  right: 633px;
+  text-align: right;
+}
+
+.product-name {
+  color: black;
+  font-size: 72px;
+  font-weight: 400;
+  font-family: "Roboto", sans-serif;
+}
+
+.product-tagline {
+  color: black;
+  font-size: 36px;
+  font-weight: 400;
+  font-family: "Josefin Slab", serif;
+  margin-top: 21px;
+}
+
+.product-description {
+  color: black;
+  font-size: 32px;
+  font-weight: 400;
+  font-family: "Roboto Flex", sans-serif;
+  margin-top: 75px;
+  width: 592px;
+}
+
+.webgl1 {
+  width: 483px;
+  height: 546px;
+  display: block;
+  border-radius: 30px;
+}
+
+.webgl2 {
+  width: 483px;
+  height: 546px;
+  display: block;
+  border-radius: 30px;
+}
+
+.webgl3 {
+  width: 483px;
+  height: 546px;
+  display: block;
+  border-radius: 30px;
+}
+
+/* Optional Footer */
+/* footer {
+  position: absolute;
+  width: 100%;
+  height: 200px;
+  bottom: 0;
+  background: #f0f0f0;
+} */
+
+/* Responsive Design (Optional) */
+/* @media (max-width: 768px) {
+  Adjust styles for smaller screens
+} */
