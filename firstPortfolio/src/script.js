@@ -15,6 +15,8 @@ const dimensions = {
 };
 dimensions.aspect = dimensions.width / dimensions.height;
 
+//Do comments count too?
+
 //Scene
 const scene = new THREE.Scene();
 const scene02 = new THREE.Scene();
