@@ -24,11 +24,14 @@ const debugObject = {
   heightSegments: 2,
   depthSegments: 2,
   jumpHeight: 1,
+  isJumping: false,
 };
 /*Folders*/
 const appearanceFolder = gui.addFolder("Appearance");
 const transformFolder = gui.addFolder("Transforms");
 const actionsFolder = gui.addFolder("Actions");
+/*Reset-Button*/
+// const resetButton = actionsFolder.add(debugObject, "reset").name("Reset");
 // #endregion
 
 //Canvas
@@ -131,7 +134,7 @@ debugObject.reset = () => {
 };
 // #endregion
 
-// #region GUI-Elements
+// #region GUI-Folders
 // #region Appearance
 /*Color-Picker*/
 appearanceFolder
@@ -184,7 +187,7 @@ appearanceFolder
 // #endregion
 
 // #region Transforms
-/*Y-Axis Position (Up/Down)*/
+// /*Y-Axis Position (Up/Down)*/
 transformFolder
   .add(cubeMesh.position, "y")
   .min(-2)
@@ -215,7 +218,7 @@ actionsFolder.add(debugObject, "spin").name("Spin");
 /*Jump-Button*/
 actionsFolder.add(debugObject, "jump").name("Jump");
 /*Reset-Button*/
-actionsFolder.add(debugObject, "reset").name("Reset");
+const resetButton = actionsFolder.add(debugObject, "reset").name("Reset");
 // #endregion
 // #endregion
 
@@ -244,7 +247,7 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-// #region Animate
+// #region ANIMATE
 const clock = new THREE.Clock();
 
 function animate() {
