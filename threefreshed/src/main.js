@@ -6,8 +6,15 @@ import { initCamera } from "./camera.js";
 import { initRenderer } from "./renderer.js";
 import { initControls } from "./controls.js";
 import { initGUI } from "./gui.js";
-import { createCubeMesh } from "./geometry.js";
+import {
+  createCubeMesh,
+  createMesh,
+  switchModel,
+  createFloorPlane,
+} from "./geometry.js";
 import { createLights } from "./lights.js";
+import { MODEL_TYPES } from "./ModelLoader.js";
+import { initDragAndDrop } from "./utilities.js";
 
 //Scene and Camera Initialization
 const scene = initScene();
@@ -23,9 +30,36 @@ scene.add(lights.ambient);
 scene.add(lights.directional);
 scene.add(lights.point);
 
+//Floor Plane
+const floorPlane = createFloorPlane();
+scene.add(floorPlane);
+
+//Drag and Drop Initialization
+initDragAndDrop(scene);
+
+// Add drag feedback
+window.addEventListener("dragenter", () => {
+  document.documentElement.classList.add("dragover");
+});
+
+window.addEventListener("dragleave", (event) => {
+  if (!event.relatedTarget) {
+    document.documentElement.classList.remove("dragover");
+  }
+});
+
+window.addEventListener("drop", () => {
+  document.documentElement.classList.remove("dragover");
+});
+
+//Initial Model
+const initialModel = await switchModel(MODEL_TYPES.CUBE);
+initialModel.name = "currentModel";
+scene.add(initialModel);
+
 //Cube Creation
-const cubeMesh = createCubeMesh();
-scene.add(cubeMesh);
+// const cubeMesh = createCubeMesh();
+// scene.add(cubeMesh);
 
 //Add Axes Helper
 const axesHelper = new THREE.AxesHelper(10);
@@ -35,7 +69,7 @@ scene.add(axesHelper);
 const controls = initControls(camera, canvas);
 
 //GUI Initialization
-initGUI(cubeMesh, scene);
+initGUI(initialModel, scene);
 
 //Resize Listener
 window.addEventListener("resize", () => {

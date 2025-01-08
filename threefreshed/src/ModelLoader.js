@@ -28,8 +28,15 @@ export class ModelLoader {
   async loadModel(path) {
     this.isLoading = true;
     return new Promise((resolve, reject) => {
+      //Handle both URLs and File paths
+      const isURL =
+        path.startsWith("data:") ||
+        path.startsWith("blob:") ||
+        path.startsWith("https:");
+      const modelPath = isURL ? path : window.location.origin + path;
+
       this.gltfLoader.load(
-        path,
+        modelPath,
         (gltf) => {
           this.isLoading = false;
           resolve(gltf);

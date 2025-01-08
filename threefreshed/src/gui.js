@@ -1,13 +1,94 @@
 "use strict";
 
 import GUI from "lil-gui";
-import { debugObject, updateCubeGeometry, createMesh } from "./geometry";
+import {
+  debugObject,
+  updateCubeGeometry,
+  createMesh,
+  switchModel,
+} from "./geometry";
 import { spin, jump, reset } from "./actions";
 import { MODELS, MODEL_TYPES } from "./ModelLoader";
 
-export function initGUI(cubeMesh, scene) {
+export function initGUI(currentModel, scene) {
   // Create a new lil-gui instance
   const gui = new GUI({ width: 300, title: "Threefresher Debugger" });
+
+  //Update GUI controls
+  function updateGUIControls(newModel) {
+    // Remove existing folders
+    if (transformFolder) transformFolder.destroy();
+    if (appearanceFolder) appearanceFolder.destroy();
+    if (actionsFolder) actionsFolder.destroy();
+
+    // Recreate Transform Controls
+    transformFolder = gui.addFolder("Transform");
+
+    transformFolder
+      .add(newModel.position, "y")
+      .min(-3)
+      .max(3)
+      .step(0.1)
+      .name("Elevation");
+
+    transformFolder
+      .add(newModel.rotation, "y")
+      .min(-Math.PI)
+      .max(Math.PI)
+      .step(0.01)
+      .name("Rotation");
+
+    // Add Scale Controls to Transform Folder
+    transformFolder
+      .add(debugObject, "modelScale", 0.1, 5)
+      .name("Scale")
+      .onChange(() => {
+        newModel.scale.set(
+          debugObject.modelScale,
+          debugObject.modelScale,
+          debugObject.modelScale
+        );
+      });
+
+    transformFolder
+      .add(
+        {
+          resetScale: () => {
+            debugObject.modelScale = 1;
+            newModel.scale.set(1, 1, 1);
+          },
+        },
+        "resetScale"
+      )
+      .name("Reset Scale");
+
+    // Recreate Material Controls
+    appearanceFolder = gui.addFolder("Appearance");
+    appearanceFolder
+      .addColor(debugObject, "color")
+      .name("Color")
+      .onChange(() => {
+        newModel.traverse((child) => {
+          if (child.isMesh) {
+            child.material.color.set(debugObject.color);
+          }
+        });
+      });
+
+    // Recreate Action Controls
+    actionsFolder = gui.addFolder("Actions");
+    actionsFolder
+      .add(debugObject, "jumpHeight")
+      .min(1)
+      .max(3)
+      .step(0.1)
+      .name("Jump Height");
+    actionsFolder.add({ spin: () => spin(newModel) }, "spin").name("Spin");
+    actionsFolder
+      .add({ jump: () => jump(newModel, debugObject.jumpHeight) }, "jump")
+      .name("Jump");
+    actionsFolder.add({ reset: () => reset(newModel) }, "reset").name("Reset");
+  }
 
   //Toggle GUI visibility with 'h' key
   window.addEventListener("keydown", (event) => {
@@ -17,27 +98,81 @@ export function initGUI(cubeMesh, scene) {
   });
 
   //Folders
-  const appearanceFolder = gui.addFolder("Appearance");
-  const transformFolder = gui.addFolder("Transform");
-  const actionsFolder = gui.addFolder("Actions");
-  const modelFolder = gui.addFolder("Model");
+  let modelFolder = gui.addFolder("Model");
+  let appearanceFolder = gui.addFolder("Appearance");
+  let transformFolder = gui.addFolder("Transform");
+  let actionsFolder = gui.addFolder("Actions");
+
+  // Add file upload control to model folder
+  modelFolder
+    .add(
+      {
+        loadFile: () => {
+          const input = document.createElement("input");
+          input.type = "file";
+          input.accept = ".glb,.gltf";
+          input.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+              const url = URL.createObjectURL(file);
+              try {
+                const oldModel = scene.getObjectByName("currentModel");
+                if (oldModel) scene.remove(oldModel);
+
+                const newModel = await createMesh(url);
+                newModel.name = "currentModel";
+                scene.add(newModel);
+                updateGUIControls(newModel);
+                URL.revokeObjectURL(url);
+              } catch (error) {
+                console.error("Failed to load model:", error);
+                URL.revokeObjectURL(url);
+              }
+            }
+          };
+          input.click();
+        },
+      },
+      "loadFile"
+    )
+    .name("Load Model File");
+
+  // Model Selection
+  modelFolder
+    .add({ currentModel: "BERET" }, "currentModel", Object.keys(MODEL_TYPES))
+    .name("Choose Model")
+    .onChange(async (value) => {
+      const oldModel = scene.getObjectByName("currentModel");
+      if (oldModel) scene.remove(oldModel);
+
+      const newModel = await switchModel(MODEL_TYPES[value]);
+      newModel.name = "currentModel";
+      scene.add(newModel);
+      updateGUIControls(newModel); //FLAG
+    });
 
   //Color
   appearanceFolder
     .addColor(debugObject, "color")
     .name("Color")
     .onChange(() => {
-      cubeMesh.material.color.set(debugObject.color);
+      if (!currentModel) return;
+
+      currentModel.traverse((child) => {
+        if (child.isMesh && child.material) {
+          child.material.color.set(debugObject.color);
+        }
+      });
     });
 
   //Wireframe
   appearanceFolder
-    .add(cubeMesh.material, "wireframe")
+    .add(currentModel.material, "wireframe")
     .name("Wireframe")
     .setValue(false);
 
   //Visibility
-  appearanceFolder.add(cubeMesh, "visible").name("Visible").setValue(true);
+  appearanceFolder.add(currentModel, "visible").name("Visible").setValue(true);
 
   //WidthSegments
   appearanceFolder
@@ -47,7 +182,7 @@ export function initGUI(cubeMesh, scene) {
     .step(1)
     .name("Width Segments")
     .onChange(() => {
-      updateCubeGeometry(cubeMesh);
+      updateCubeGeometry(currentModel);
     });
 
   //HeightSegments
@@ -58,7 +193,7 @@ export function initGUI(cubeMesh, scene) {
     .step(1)
     .name("Height Segments")
     .onChange(() => {
-      updateCubeGeometry(cubeMesh);
+      updateCubeGeometry(currentModel);
     });
 
   //DepthSegments
@@ -69,18 +204,18 @@ export function initGUI(cubeMesh, scene) {
     .step(1)
     .name("Depth Segments")
     .onChange(() => {
-      updateCubeGeometry(cubeMesh);
+      updateCubeGeometry(currentModel);
     });
 
   //Transform Folder
   transformFolder
-    .add(cubeMesh.position, "y")
+    .add(currentModel.position, "y")
     .min(-2)
     .max(2)
     .step(0.01)
     .name("Elevation");
   transformFolder
-    .add(cubeMesh.rotation, "y")
+    .add(currentModel.rotation, "y")
     .min(-Math.PI)
     .max(Math.PI)
     .step(0.01)
@@ -102,19 +237,11 @@ export function initGUI(cubeMesh, scene) {
     .max(3)
     .step(0.1)
     .name("Jump Height");
-  actionsFolder.add({ spin: () => spin(cubeMesh) }, "spin").name("Spin");
+  actionsFolder.add({ spin: () => spin(currentModel) }, "spin").name("Spin");
   actionsFolder
-    .add({ jump: () => jump(cubeMesh, debugObject.jumpHeight) }, "jump")
+    .add({ jump: () => jump(currentModel, debugObject.jumpHeight) }, "jump")
     .name("Jump");
-  actionsFolder.add({ reset: () => reset(cubeMesh) }, "reset").name("Reset");
-
-  // Model Selection
-  modelFolder
-    .add({ model: "Beret" }, "model", Object.keys(MODELS))
-    .onChange(async (value) => {
-      const newModel = await createMesh(MODELS[value]);
-      scene.remove(scene.getObjectByName("currentModel"));
-      newModel.name = "currentModel";
-      scene.add(newModel);
-    });
+  actionsFolder
+    .add({ reset: () => reset(currentModel) }, "reset")
+    .name("Reset");
 }

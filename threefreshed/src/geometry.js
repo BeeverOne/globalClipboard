@@ -3,6 +3,7 @@
 import * as THREE from "three";
 import { ModelLoader } from "./ModelLoader.js";
 import { MODELS, MODEL_TYPES } from "./ModelLoader.js";
+import { floor } from "three/tsl";
 
 //ModelLoader Initialization
 const modelLoader = new ModelLoader();
@@ -27,6 +28,19 @@ function createCubeGeometry() {
     debugObject.heightSegments,
     debugObject.depthSegments
   );
+}
+
+// ! Floor Plane Geometry
+export function createFloorPlane() {
+  const floorGeometry = new THREE.PlaneGeometry(1000, 1000);
+  const floorMaterial = new THREE.MeshBasicMaterial({
+    color: "#dad7cd",
+    side: THREE.DoubleSide,
+  });
+  const floorPlane = new THREE.Mesh(floorGeometry, floorMaterial);
+  floorPlane.rotation.x = Math.PI / 2;
+  floorPlane.position.y = -0.6;
+  return floorPlane;
 }
 
 // ! Mesh Creation
@@ -60,15 +74,26 @@ export async function createMesh(modelPath = MODELS.BERET) {
 // #region switchModel
 
 export async function switchModel(type) {
-  switch (type) {
-    case MODEL_TYPES.CUBE:
-      return createCubeMesh();
-    case MODEL_TYPES.BERET:
-      return await createMesh(MODELS.BERET);
-    case MODEL_TYPES.DONUT:
-      return await createMesh(MODELS.DONUT);
-    default:
-      return createCubeMesh();
+  try {
+    switch (type) {
+      case MODEL_TYPES.CUBE:
+        const cubeMesh = createCubeMesh();
+        cubeMesh.material = new THREE.MeshStandardMaterial({
+          color: debugObject.color,
+          metalness: 0.1,
+          roughness: 0.8,
+        });
+        return cubeMesh;
+      case MODEL_TYPES.BERET:
+        return await createMesh(MODELS.BERET);
+      case MODEL_TYPES.DONUT:
+        return await createMesh(MODELS.DONUT);
+      default:
+        return createCubeMesh();
+    }
+  } catch (error) {
+    console.error("Model switch failed:", error);
+    return createCubeMesh();
   }
 }
 // #endregion
