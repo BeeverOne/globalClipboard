@@ -3,7 +3,7 @@
 import * as THREE from "three";
 import { ModelLoader } from "./ModelLoader.js";
 import { MODELS, MODEL_TYPES } from "./ModelLoader.js";
-import { floor } from "three/tsl";
+import { color, floor } from "three/tsl";
 
 //ModelLoader Initialization
 const modelLoader = new ModelLoader();
@@ -31,16 +31,29 @@ function createCubeGeometry() {
 }
 
 // ! Floor Plane Geometry
+
+/** Plane Texture - Grid*/
+const textureLoader = new THREE.TextureLoader();
+const gridTexture = textureLoader.load("../static/textures/gridColor1.jpg");
+gridTexture.magFilter = THREE.NearestFilter;
+gridTexture.repeat.set(7, 7);
+
+gridTexture.wrapS = THREE.RepeatWrapping;
+gridTexture.wrapT = THREE.RepeatWrapping;
+
+gridTexture.colorSpace = THREE.SRGBColorSpace;
+
 export function createFloorPlane() {
-  const floorGeometry = new THREE.PlaneGeometry(1000, 1000);
-  const floorMaterial = new THREE.MeshBasicMaterial({
-    color: "#dad7cd",
+  const geometry = new THREE.PlaneGeometry(500, 500);
+  const material = new THREE.MeshStandardMaterial({
+    map: gridTexture,
+    color: 0x808080,
     side: THREE.DoubleSide,
   });
-  const floorPlane = new THREE.Mesh(floorGeometry, floorMaterial);
-  floorPlane.rotation.x = Math.PI / 2;
-  floorPlane.position.y = -0.6;
-  return floorPlane;
+  const plane = new THREE.Mesh(geometry, material);
+  plane.rotation.x = -Math.PI / 2; // Rotate the plane to be horizontal
+  plane.position.y = -0.5; // Position the plane slightly below the origin
+  return plane;
 }
 
 // ! Mesh Creation

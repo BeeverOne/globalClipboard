@@ -7,7 +7,7 @@ export function initCamera() {
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    100
+    10000
   );
   camera.position.set(1, 1, 2);
   return camera;

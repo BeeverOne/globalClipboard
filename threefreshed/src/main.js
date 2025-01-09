@@ -1,6 +1,8 @@
 "use strict";
 
 import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { initScene } from "./scene.js";
 import { initCamera } from "./camera.js";
 import { initRenderer } from "./renderer.js";
@@ -52,6 +54,53 @@ window.addEventListener("drop", () => {
   document.documentElement.classList.remove("dragover");
 });
 
+// Configure DRACOLoader
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath("/examples/jsm/libs/draco/"); // Set the path to the Draco decoder
+dracoLoader.preload();
+
+// Load and animate GLB model
+const loader = new GLTFLoader();
+loader.setDRACOLoader(dracoLoader);
+loader.load(
+  "../static/animations/dancing.glb",
+  (gltf) => {
+    const model = gltf.scene;
+    scene.add(model);
+
+    // Extract the animation clips
+    const clips = gltf.animations;
+
+    // Create an AnimationMixer
+    const mixer = new THREE.AnimationMixer(model);
+
+    // Play the first animation clip
+    const action = mixer.clipAction(clips[0]);
+    action.play();
+
+    // Update the mixer on each frame
+    function animate() {
+      const delta = clock.getDelta();
+      mixer.update(delta);
+
+      //Update controls
+      controls.update();
+
+      //Render
+      renderer.render(scene, camera);
+
+      //Call animate recursively
+      window.requestAnimationFrame(animate);
+    }
+
+    animate();
+  },
+  undefined,
+  (error) => {
+    console.error("An error happened", error);
+  }
+);
+
 //Initial Model
 const initialModel = await switchModel(MODEL_TYPES.CUBE);
 initialModel.name = "currentModel";
@@ -60,6 +109,10 @@ scene.add(initialModel);
 //Cube Creation
 // const cubeMesh = createCubeMesh();
 // scene.add(cubeMesh);
+
+//Add Grid Helper
+const gridHelper = new THREE.GridHelper(50, 50);
+// scene.add(gridHelper);
 
 //Add Axes Helper
 const axesHelper = new THREE.AxesHelper(10);

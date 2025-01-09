@@ -8,12 +8,14 @@ export const MODELS = {
   NONE: null, //Default Cube
   BERET: "/src/models/Beret.glb",
   DONUT: "/src/models/donut.glb",
+  DANCER: "/static/animations/dancing.glb",
 };
 
 export const MODEL_TYPES = {
   CUBE: "Cube",
   BERET: "Beret",
   DONUT: "Donut",
+  DANCER: "Dancer",
 };
 
 export class ModelLoader {
