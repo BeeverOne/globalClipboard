@@ -1,0 +1,53 @@
+html,
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+textarea {
+  width: 100%;
+  height: 50%;
+  resize: none; /* Play with this later*/
+  outline: none;
+  font-size: 25px;
+}
+
+.webgl {
+  width: 100%;
+  height: 50%;
+  background-color: rgb(169, 169, 255);
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #f1f1f1;
+  border-bottom: 1px solid #d1d1d1;
+  height: 20px;
+}
+
+.button-group-left,
+.button-group-right {
+  display: flex;
+  gap: 5px;
+}
+
+.toolbar button {
+  padding: 5px 10px;
+  border: 1px solid #d1d1d1;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+}
+
+.toolbar button:hover {
+  background-color: #e9e9e9;
+}
