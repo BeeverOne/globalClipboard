@@ -32,10 +32,16 @@
                 <span class="icon icon-minus"></span>
               </button>
             </div>
-            <button class="btn btn-default pull-right">
-              <span class="icon icon-download icon-text"></span>
-              Save
-            </button>
+            <div class="btn-group pull-right">
+              <button class="btn btn-default" onclick="clearTextArea()">
+                <span class="icon icon-trash icon-text"></span>
+                Clear
+              </button>
+              <button class="btn btn-default" onclick="saveFile()">
+                <span class="icon icon-download icon-text"></span>
+                Save
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -47,13 +53,29 @@
     </div>
 
     <script>
+      // const { ipcRenderer } = require("electron");
+
       let textarea = document.querySelector("textarea");
       let defaultFontSize = 20;
+
       function increaseFontSize() {
         textarea.style.fontSize = `${++defaultFontSize}px`;
       }
+
       function decreaseFontSize() {
         textarea.style.fontSize = `${--defaultFontSize}px`;
+      }
+
+      function saveFile() {
+        let text = textarea.value;
+        console.log(text);
+        window.api.saveText(text);
+
+        // ipcRenderer.send("save", text);
+      }
+
+      function clearTextArea() {
+        textarea.value = "";
       }
     </script>
   </body>

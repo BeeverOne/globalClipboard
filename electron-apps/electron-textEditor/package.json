@@ -10,7 +10,9 @@
   "description": "",
   "dependencies": {
     "electron": "^33.3.1",
+    "electronmon": "^2.0.3",
     "lil-gui": "^0.20.0",
     "three": "^0.172.0"
-  }
+  },
+  "ext": "js, txt"
 }
