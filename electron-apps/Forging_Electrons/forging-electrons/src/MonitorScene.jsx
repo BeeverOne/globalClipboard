@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { Canvas, useLoader, useFrame, useThree } from "@react-three/fiber";
 import {
   OrbitControls,
@@ -12,7 +12,7 @@ import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { Euler, Vector3, MeshPhysicalMaterial, Mesh } from "three";
 
 function Rig() {
-  const { camera, pointer } = useThree();
+  const { camera, pointer, viewport } = useThree();
   const vec = new Vector3();
 
   return useFrame(() => {
@@ -26,12 +26,10 @@ function Rig() {
 
 function MonitorModel() {
   const monitorRef = useRef();
+  //
 
   //Load OBJ
-  const obj = useLoader(
-    OBJLoader,
-    "../public/models/Monitor Curved/monitor.obj"
-  );
+  const obj = useLoader(OBJLoader, "/models/Monitor Curved/monitor.obj");
   const material = new MeshPhysicalMaterial({
     color: "#676464",
     metalness: 0.2,
@@ -65,24 +63,30 @@ function MonitorModel() {
 
 function Camera() {
   const cameraRef = useRef();
+  const { size } = useThree();
+
+  useEffect(() => {
+    if (!cameraRef.current) return;
+    cameraRef.current.aspect = size.width / size.height;
+    cameraRef.current.updateProjectionMatrix();
+  }, [size]);
 
   // Adjust these to change camera rotation
-  const rotation = new Euler(
-    Math.PI * 0.1, // X rotation (pitch) in radians
-    Math.PI * 0, // Y rotation (yaw) in radians
-    Math.PI * 0 // Z rotation (roll) in radians
-  );
+  //   const rotation = new Euler(
+  //     Math.PI * 0.1, // X rotation (pitch) in radians
+  //     Math.PI * 0, // Y rotation (yaw) in radians
+  //     Math.PI * 0 // Z rotation (roll) in radians
+  //   );
 
-  const { viewport } = useThree();
+  //   const { viewport } = useThree();
 
-  useFrame(() => {
-    if (cameraRef.current) {
-      cameraRef.current.rotation.copy(rotation);
-      // Adjust FOV based on aspect ratio
-      cameraRef.current.fov = viewport.aspect < 1 ? 100 : 80;
-      cameraRef.current.updateProjectionMatrix();
-    }
-  });
+  //   useFrame(() => {
+  //     if (cameraRef.current) {
+  //       cameraRef.current.rotation.copy(rotation);
+
+  //       cameraRef.current.updateProjectionMatrix();
+  //     }
+  //   });
 
   return (
     <PerspectiveCamera
@@ -107,7 +111,7 @@ export default function MonitorScene() {
         intensity={1}
         environment="city"
         shadows={{ type: "accumulative", bias: -0.001, intensity: Math.PI }}
-        adjustCamera={true}
+        adjustCamera={false}
       ></Stage>
       <Grid
         renderOrder={-1}
@@ -134,7 +138,7 @@ export default function MonitorScene() {
         enableRotate={true} // Disable rotation
         enablePan={true} // Disable panning
       />
-      <Environment files="../public/hdr/small-studio.hdr" background={false} />
+      <Environment files="/hdr/small-studio.hdr" background={false} />
     </Canvas>
   );
 }
