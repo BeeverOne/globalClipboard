@@ -25,7 +25,6 @@ This should initialize your app and install the basic dependencies to get your a
 
 This is what my app looks like on first launch. I think the window is too small especially with dev tools open. To increase the window size, I’ll adjust the height and width of the main window in `forging-electrons/src/main.js` (the main process of the app). In order to see the changes you made, you need to restart the app by using `Ctrl + C` in the terminal or closing the app as you would other apps.
 
-![[Pasted image 20250120093703.jpg]]
 ![Bigger App Window](./forging-electrons/public/screenshots-docs/Shot_02.png)
 
 I’m not sure how easy it is to tell from both pictures that the second one is bigger but it is, trust me :).
@@ -200,7 +199,6 @@ export default function App() {
 
 Now it should look like this;
 
-![[Pasted image 20250120121107.jpg]]
 ![App Gradient Background](./forging-electrons/public/screenshots-docs/Shot_06.png)
 
 Now I’ll add a drawer and bunch of other elements for the app.
